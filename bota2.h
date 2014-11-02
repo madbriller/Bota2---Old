@@ -14,6 +14,13 @@ class Bota2 : public QMainWindow
 public:
     explicit Bota2(QWidget *parent = 0);
     ~Bota2();
+    void teamUpdate();
+    int teamNameToID(QString teamName);
+
+private slots:
+    void on_actionTeamAdd_triggered();
+
+    void on_actionAdd_Match_triggered();
 
 private:
     Ui::Bota2 *ui;
