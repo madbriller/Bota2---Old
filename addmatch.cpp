@@ -50,16 +50,35 @@ void addMatch::on_butComplete_clicked()
     db.open();
     QSqlQuery query(db);
     query.prepare("INSERT INTO matches (teamOne, teamTwo, teamWinner, matchType, teamOneScore, teamTwoScore, Date) VALUES (?, ?, ?, ?, ?, ?, ?) ");
-    query.addBindValue(ui->comboTeam1->currentText());
-    query.addBindValue(ui->comboTeam2->currentText());
-    query.addBindValue(ui->comboWinner->currentText());
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboWinner->currentText()));
     query.addBindValue(ui->spinBO->value());
     query.addBindValue(ui->spin1Score->value());
     query.addBindValue(ui->spin2Score->value());
     query.addBindValue(ui->dateEdit->dateTime().toString());
     query.exec();
+
     db.close(); // for close connection
     this->close();
+}
+
+int addMatch::teamNameToID(QString teamName)
+{
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT teamID FROM teams WHERE teamName = ?");
+    query.addBindValue(teamName);
+    query.exec();
+    while (query.next()) {
+        db.close(); // for close connection
+        return (query.value(0).toInt()); //returns ID
+    }
+    return -1; //no team name match
+
 }
 
 void addMatch::on_butCancel_clicked()

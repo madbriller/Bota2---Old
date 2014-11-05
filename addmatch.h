@@ -24,6 +24,7 @@ private slots:
     void on_butCancel_clicked();
 
 private:
+    int teamNameToID(QString teamName);
     Ui::addMatch *ui;
 };
 

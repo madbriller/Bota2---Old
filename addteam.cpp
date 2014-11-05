@@ -30,6 +30,8 @@ void addTeam::on_butAdd_clicked()
     this->close();
 }
 
+
+
 void addTeam::on_butCancel_clicked()
 {
     this->close();
