@@ -6,17 +6,17 @@ A small project of mine to allow tracking of professional Dota2 games and to pro
 This versions allows the input of match data atleast.
 
 Lots to do! This version contains:
-- Updated match tracking, uses ID's rather than names now; makes things easier to track internally. 
-- Overall Vs winrate between two teams is implemented roughly
+- All stats are now calculated and roughly displayed.
+- Made Interface easier to work with.
+- Began adding team and match data (included in data.db3)
 
 
 TODO:
-
-- Add total VS games indicator in middle section
-- Add total games indicator above teams
+- Clean it up
+- Add team/match management
+- Add regions
+- Add sample size indicator
 - Add colour indications to labels
-- Add all algorithms for full statistic tracking
 - Error checking!
 - Sanity Checking
-- Game AND Match tracking, obvious distinction on ui.
 - Many other things..
