@@ -37,13 +37,14 @@ void Bota2::teamUpdate() {
     QSqlQuery query(db);
     query.prepare("SELECT teamName FROM teams");
     query.exec();
+    QStringList teamList;
     while (query.next()) {
-        ui->comboTeam1->addItem(query.value(0).toString());
-        ui->comboTeam2->addItem(query.value(0).toString());
+        teamList.insert(0, query.value(0).toString());
     }
+    teamList.sort();
     db.close(); // for close connection
-
-
+    ui->comboTeam1->addItems(teamList);
+    ui->comboTeam2->addItems(teamList);
 }
 
 void Bota2::on_actionAdd_Match_triggered() {
@@ -74,23 +75,33 @@ int Bota2::teamNameToID(QString teamName)
 
 void Bota2::on_comboTeam1_activated(const QString &arg1)
 {
+    T1OverallUpdate();
+    T17DayUpdate();
+    T130DayUpdate();
     overallVSWinUpdate();
     BO1VSUpdate();
     BO2VSUpdate();
     BO3VSUpdate();
     BO5VSUpdate();
     BO7VSUpdate();
+    VS7DayUpdate();
+    VS30DayUpdate();
 }
 
 
 void Bota2::on_comboTeam2_activated(const QString &arg1)
 {
+    T2OverallUpdate();
+    T27DayUpdate();
+    T230DayUpdate();
     overallVSWinUpdate();
     BO1VSUpdate();
     BO2VSUpdate();
     BO3VSUpdate();
     BO5VSUpdate();
     BO7VSUpdate();
+    VS7DayUpdate();
+    VS30DayUpdate();
 }
 
 void Bota2::overallVSWinUpdate() {
@@ -124,6 +135,82 @@ void Bota2::overallVSWinUpdate() {
     } else {
         ui->lbl1O->setText("N/A");
         ui->lbl2O->setText("N/A");
+    }
+}
+
+void Bota2::VS7DayUpdate() {
+    QDate currentDate = QDate::currentDate();
+    float teamOne = 0, teamTwo = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE (teamOne = ? AND teamTwo = ?) OR (teamOne = ? AND teamTwo = ?)");
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.exec();
+    while (query.next()) {
+        QDate matchDate = QDate::fromString(query.value(7).toString());
+        if (matchDate.daysTo(currentDate) <= 7) {
+            if (query.value(3).toInt() == teamNameToID(ui->comboTeam1->currentText())) {
+                teamOne += 1;
+            }
+            else if (query.value(3).toInt() == teamNameToID(ui->comboTeam2->currentText())) {
+                teamTwo += 1;
+            }
+            overall += 1;
+        }
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    QString team2 = QString::number(teamTwo/overall*100);
+    if (overall > 0) {
+        ui->lbl17->setText(team1 + "%");
+        ui->lbl27->setText(team2 + "%");
+    } else {
+        ui->lbl17->setText("N/A");
+        ui->lbl27->setText("N/A");
+    }
+}
+
+void Bota2::VS30DayUpdate() {
+    QDate currentDate = QDate::currentDate();
+    float teamOne = 0, teamTwo = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE (teamOne = ? AND teamTwo = ?) OR (teamOne = ? AND teamTwo = ?)");
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.exec();
+    while (query.next()) {
+        QDate matchDate = QDate::fromString(query.value(7).toString());
+        if (matchDate.daysTo(currentDate) <= 30) {
+            if (query.value(3).toInt() == teamNameToID(ui->comboTeam1->currentText())) {
+                teamOne += 1;
+            }
+            else if (query.value(3).toInt() == teamNameToID(ui->comboTeam2->currentText())) {
+                teamTwo += 1;
+            }
+            overall += 1;
+        }
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    QString team2 = QString::number(teamTwo/overall*100);
+    if (overall > 0) {
+        ui->lbl130->setText(team1 + "%");
+        ui->lbl230->setText(team2 + "%");
+    } else {
+        ui->lbl130->setText("N/A");
+        ui->lbl230->setText("N/A");
     }
 }
 
@@ -297,3 +384,175 @@ void Bota2::BO7VSUpdate() {
     }
 }
 
+void Bota2::T1OverallUpdate() {
+    float teamOne = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE teamOne = ? OR teamTwo = ?");
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.exec();
+    while (query.next()) {
+        if (query.value(3).toInt() == teamNameToID(ui->comboTeam1->currentText())) {
+            teamOne += 1;
+        }
+        overall += 1;
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    if (overall > 0) {
+        ui->lblOWR1->setText(team1 + "%");
+    } else {
+        ui->lblOWR1->setText("N/A");
+    }
+}
+
+
+void Bota2::T2OverallUpdate() {
+    float teamOne = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE teamOne = ? OR teamTwo = ?");
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.exec();
+    while (query.next()) {
+        if (query.value(3).toInt() == teamNameToID(ui->comboTeam2->currentText())) {
+            teamOne += 1;
+        }
+        overall += 1;
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    if (overall > 0) {
+        ui->lblOWR2->setText(team1 + "%");
+    } else {
+        ui->lblOWR2->setText("N/A");
+    }
+}
+
+void Bota2::T17DayUpdate() {
+    QDate currentDate = QDate::currentDate();
+    float teamOne = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE teamOne = ? OR teamTwo = ?");
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.exec();
+    while (query.next()) {
+        QDate matchDate = QDate::fromString(query.value(7).toString());
+        if (matchDate.daysTo(currentDate) <= 7) {
+            if (query.value(3).toInt() == teamNameToID(ui->comboTeam1->currentText())) {
+                teamOne += 1;
+            }
+            overall += 1;
+        }
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    if (overall > 0) {
+        ui->lbl7WR1->setText(team1 + "%");
+    } else {
+        ui->lbl7WR1->setText("N/A");
+    }
+}
+
+void Bota2::T27DayUpdate() {
+    QDate currentDate = QDate::currentDate();
+    float teamOne = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE teamOne = ? OR teamTwo = ?");
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.exec();
+    while (query.next()) {
+        QDate matchDate = QDate::fromString(query.value(7).toString());
+        if (matchDate.daysTo(currentDate) <= 7) {
+            if (query.value(3).toInt() == teamNameToID(ui->comboTeam2->currentText())) {
+                teamOne += 1;
+            }
+            overall += 1;
+        }
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    if (overall > 0) {
+        ui->lbl7WR2->setText(team1 + "%");
+    } else {
+        ui->lbl7WR2->setText("N/A");
+    }
+}
+
+void Bota2::T130DayUpdate() {
+    QDate currentDate = QDate::currentDate();
+    float teamOne = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE teamOne = ? OR teamTwo = ?");
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam1->currentText()));
+    query.exec();
+    while (query.next()) {
+        QDate matchDate = QDate::fromString(query.value(7).toString());
+        if (matchDate.daysTo(currentDate) <= 30) {
+            if (query.value(3).toInt() == teamNameToID(ui->comboTeam1->currentText())) {
+                teamOne += 1;
+            }
+            overall += 1;
+        }
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    if (overall > 0) {
+        ui->lbl30WR1->setText(team1 + "%");
+    } else {
+        ui->lbl30WR1->setText("N/A");
+    }
+}
+
+void Bota2::T230DayUpdate() {
+    QDate currentDate = QDate::currentDate();
+    float teamOne = 0, overall = 0;
+    QSqlDatabase db;
+    db =  QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName("data.db3");
+    db.open();
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM matches WHERE teamOne = ? OR teamTwo = ?");
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.addBindValue(teamNameToID(ui->comboTeam2->currentText()));
+    query.exec();
+    while (query.next()) {
+        QDate matchDate = QDate::fromString(query.value(7).toString());
+        if (matchDate.daysTo(currentDate) <= 30) {
+            if (query.value(3).toInt() == teamNameToID(ui->comboTeam2->currentText())) {
+                teamOne += 1;
+            }
+            overall += 1;
+        }
+    }
+    db.close(); // for close connection
+    QString team1 = QString::number(teamOne/overall*100);
+    if (overall > 0) {
+        ui->lbl30WR2->setText(team1 + "%");
+    } else {
+        ui->lbl30WR2->setText("N/A");
+    }
+}

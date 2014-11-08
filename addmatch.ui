@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -93,18 +93,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QDateEdit" name="dateEdit">
-      <property name="dateTime">
-       <datetime>
-        <hour>0</hour>
-        <minute>0</minute>
-        <second>0</second>
-        <year>2010</year>
-        <month>1</month>
-        <day>1</day>
-       </datetime>
-      </property>
-     </widget>
+     <widget class="QDateEdit" name="dateEdit"/>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">

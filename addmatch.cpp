@@ -7,6 +7,7 @@ addMatch::addMatch(QWidget *parent) :
     ui(new Ui::addMatch)
 {
     ui->setupUi(this);
+    ui->dateEdit->setDate(QDate::currentDate());
     QSqlDatabase db;
     db =  QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("data.db3");
@@ -14,11 +15,14 @@ addMatch::addMatch(QWidget *parent) :
     QSqlQuery query(db);
     query.prepare("SELECT teamName FROM teams;");
     query.exec();
+    QStringList teamList;
     while (query.next()) {
-        ui->comboTeam1->addItem(query.value(0).toString());
-        ui->comboTeam2->addItem(query.value(0).toString());
+        teamList.insert(0, query.value(0).toString());
     }
+    teamList.sort();
     db.close(); // for close connection
+    ui->comboTeam1->addItems(teamList);
+    ui->comboTeam2->addItems(teamList);
     ui->comboWinner->addItem(ui->comboTeam1->currentText());
     ui->comboWinner->addItem(ui->comboTeam2->currentText());
 }
@@ -56,7 +60,7 @@ void addMatch::on_butComplete_clicked()
     query.addBindValue(ui->spinBO->value());
     query.addBindValue(ui->spin1Score->value());
     query.addBindValue(ui->spin2Score->value());
-    query.addBindValue(ui->dateEdit->dateTime().toString());
+    query.addBindValue(ui->dateEdit->dateTime().date().toString());
     query.exec();
 
     db.close(); // for close connection

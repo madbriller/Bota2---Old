@@ -29,11 +29,19 @@ private slots:
 private:
     Ui::Bota2 *ui;
     void overallVSWinUpdate();
+    void VS7DayUpdate();
+    void VS30DayUpdate();
     void BO1VSUpdate();
     void BO2VSUpdate();
     void BO3VSUpdate();
     void BO5VSUpdate();
     void BO7VSUpdate();
+    void T1OverallUpdate();
+    void T2OverallUpdate();
+    void T17DayUpdate();
+    void T27DayUpdate();
+    void T130DayUpdate();
+    void T230DayUpdate();
     int teamNameToID(QString teamName);
 
 };
