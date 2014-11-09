@@ -2,6 +2,7 @@
 #include "ui_bota2.h"
 #include "addteam.h"
 #include "addmatch.h"
+#include "manageteams.h"
 #include "QtSQL/QtSQL"
 #include "qdebug.h"
 
@@ -555,4 +556,11 @@ void Bota2::T230DayUpdate() {
     } else {
         ui->lbl30WR2->setText("N/A");
     }
+}
+
+void Bota2::on_actionTeamManage_triggered()
+{
+    manageTeams dialog;
+    dialog.setModal(true);
+    dialog.exec();
 }

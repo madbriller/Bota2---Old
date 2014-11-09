@@ -26,6 +26,8 @@ private slots:
 
     void on_comboTeam2_activated(const QString &arg1);
 
+    void on_actionTeamManage_triggered();
+
 private:
     Ui::Bota2 *ui;
     void overallVSWinUpdate();

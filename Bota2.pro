@@ -16,12 +16,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         bota2.cpp \
     addteam.cpp \
-    addmatch.cpp
+    addmatch.cpp \
+    manageteams.cpp
 
 HEADERS  += bota2.h \
     addteam.h \
-    addmatch.h
+    addmatch.h \
+    manageteams.h
 
 FORMS    += bota2.ui \
     addteam.ui \
-    addmatch.ui
+    addmatch.ui \
+    manageteams.ui
